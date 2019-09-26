@@ -1,0 +1,19 @@
+motor right
+avg of 0.3 is 20.55 => 21
+avg of 0.4 is 36.6  => 37
+avg of 0.5 is 47.08 => 47
+avg of 0.6 is 53.63 => 54
+avg of 0.7 is 56.7  => 57
+avg of 0.8 is 60.25 => 60
+avg of 0.9 is 63.51 => 64
+avg of 1.0 is 69.31 => 70
+
+motor left
+avg of 0.3 is 19.88 => 20
+avg of 0.4 is 35.68 => 36
+avg of 0.5 is 44.98 => 45
+avg of 0.6 is 51.51 => 52
+avg of 0.7 is 56.45 => 56
+avg of 0.8 is 59.91 => 60
+avg of 0.9 is 62.58 => 63
+avg of 1.0 is 68.21 => 68
