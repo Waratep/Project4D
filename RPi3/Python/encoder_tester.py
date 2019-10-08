@@ -25,9 +25,9 @@ class Motor:
         self.output = 0
         self.sumerror = 0
 
-        self.kp = 2
-        self.ki = 1
-        self.kd = 0
+        self.kp = 0.1
+        self.ki = 0.1
+        self.kd = 0.2
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM) 
@@ -41,33 +41,24 @@ class Motor:
 
 
     def callbackleft_encoder(self,dummy):
-        # if (GPIO.input(self.left_encoder) == GPIO.HIGH and self.left_state_encoder == 0):
         self.left_counter_encoder += 1
-        print('right',self.right_counter_encoder,'left',self.left_counter_encoder)
 
-        #     self.left_state_encoder = 1
-        # if (GPIO.input(self.left_encoder) == GPIO.LOW and self.left_state_encoder == 1):
-        #     self.left_state_encoder = 0
 
     def callbackright_encoder(self,dummy):
-        # if (GPIO.input(self.right_encoder) == GPIO.HIGH and self.right_state_encoder == 0):
         self.right_counter_encoder += 1
-        print('right',self.right_counter_encoder,'left',self.left_counter_encoder)
-        #     self.right_state_encoder = 1
-        # if (GPIO.input(self.right_encoder) == GPIO.LOW and self.right_state_encoder == 1):
-        #     self.right_state_encoder = 0
+        # print('right',self.right_counter_encoder,'left',self.left_counter_encoder)
+
     
     def run(self):
 
-        if (int(round(time.time() * 1000)) - self.millis >= 1000):
+        if (int(round(time.time() * 1000)) - self.millis >= 100):
             self.millis = int(round(time.time() * 1000))
-            self.speedLeftWheel = self.left_counter_encoder*self.circle_wheel/self.circle_encoder
-            self.speedRightWheel = self.right_counter_encoder*self.circle_wheel/self.circle_encoder
+            self.speedLeftWheel = self.left_counter_encoder*self.circle_wheel/self.circle_encoder * 10
+            self.speedRightWheel = self.right_counter_encoder*self.circle_wheel/self.circle_encoder * 10
             self.left_counter_encoder = 0
             self.right_counter_encoder = 0
             
-            # print('Velocity Motor Left', self.speedLeftWheel,'cm/s')
-            print('Velocity Motor Rihgt',self.speedRightWheel,'cm/s')
+            # print('Velocity Motor Rihgt',self.speedRightWheel,'cm/s')
             
 
     def stop(self):
@@ -77,6 +68,7 @@ class Motor:
         self.lasterror = self.error 
         self.error = speed - self.speedRightWheel
         self.sumerror += self.error
+
         self.output = ( self.error * self.kp ) + ( self.sumerror * self.ki ) + ( ( self.error - self.lasterror ) * self.kd )
 
         if(self.output > 100): 
@@ -106,8 +98,8 @@ if __name__ == "__main__":
     
         while (1): 
             
-            # motor.run()
-            # motor.setMotor(0)
+            motor.run()
+            motor.setMotor(80)
 
             time.sleep(0.1)
 
