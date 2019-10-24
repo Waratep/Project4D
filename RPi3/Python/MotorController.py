@@ -46,10 +46,9 @@ class Motor:
 
     def callbackright_encoder(self,dummy):
         self.right_counter_encoder += 1
-        # print('right',self.right_counter_encoder,'left',self.left_counter_encoder)
 
     
-    def run(self):
+    def run(self,debug = False):
 
         if (int(round(time.time() * 1000)) - self.millis >= 100):
             self.millis = int(round(time.time() * 1000))
@@ -58,13 +57,15 @@ class Motor:
             self.left_counter_encoder = 0
             self.right_counter_encoder = 0
             
-            # print('Velocity Motor Rihgt',self.speedRightWheel,'cm/s')
+            if(debug):
+                print('Velocity Motor Rihgt',"{:2f}".format(self.speedRightWheel),'cm/s')
             
 
     def stop(self):
-        pass
+        self.kit.motor2.throttle = 0
+        self.kit.motor1.throttle = 0
 
-    def setMotor(self,speed):
+    def setMotor(self,speed,debug = False):
         self.lasterror = self.error 
         self.error = speed - self.speedRightWheel
         self.sumerror += self.error
@@ -76,7 +77,9 @@ class Motor:
         if(self.output < -100):
             self.output = -100
 
-        print('self.output',self.output,'self.speedRightWheel',self.speedRightWheel,'self.error',self.error)
+        if(debug):
+            print('self.output',"{:2f}".format(self.output),'self.speedRightWheel',"{:2f}".format(self.speedRightWheel),'self.error',"{:2f}".format(self.error))
+        
         self.kit.motor2.throttle = self.output / 100
         self.kit.motor1.throttle = self.output / 100
 
