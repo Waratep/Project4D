@@ -47,6 +47,8 @@ class HoughTransform:
         self.corerun()                    
         self._debug(debug = debugs)
 
+        return float(round(self.slope_right + self.slope_left,3))
+
 
     def corerun(self): 
         

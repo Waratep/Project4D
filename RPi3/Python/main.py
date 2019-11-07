@@ -29,22 +29,42 @@ if __name__ == "__main__":
     GPIO.add_event_detect(motor.left_encoder, GPIO.FALLING, motor.callbackleft_encoder, bouncetime=1)  
     GPIO.add_event_detect(motor.right_encoder, GPIO.FALLING, motor.callbackright_encoder, bouncetime=1)  
 
+    def_speed = 40
+    error = 0
+    last_error = 0
+    sum_error = 0
+    output = 0
+
+    kp = 5
+    ki = 0
+    kd = 2
+
+
     try: 
         
         with picamera.PiCamera() as camera:
             with picamera.array.PiRGBArray(camera) as stream:
+
                 camera.resolution = (100, 70)
                     
                 while (1): 
 
                     camera.capture(stream, 'bgr', use_video_port=True)
                     image = stream.array
-                    # cv2.imshow('frame',image)
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
 
-                    htf.run(image,debugs = True)
-                    # reset the stream before the next capture
+                    lasterror = error
+                    error = htf.run(image,debugs = True)
+                    error = float(error)
+                    sum_error += error
+
+                    output = ( error * kp ) + ( sum_error * ki ) + ( ( error - lasterror ) * kd )
+
+                    motor.run()
+                    motor.setMotorLeft((def_speed + output)/100)
+                    motor.setMotorRight((def_speed - output)/100)
+
                     stream.seek(0)
                     stream.truncate()
 
