@@ -25,9 +25,9 @@ class Motor:
         self.output = 0
         self.sumerror = 0
 
-        self.kp = 0.1
-        self.ki = 0.1
-        self.kd = 0.2
+        self.kp = 2
+        self.ki = 0.0
+        self.kd = 0.0
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM) 
@@ -65,7 +65,22 @@ class Motor:
         self.kit.motor2.throttle = 0
         self.kit.motor1.throttle = 0
 
+    def setMotorLeft(self,pwm):
+        if(pwm > 1):
+            pwm = 1
+        if(pwm < -1):
+            pwm = -1
+        self.kit.motor1.throttle = pwm
+    def setMotorRight(self,pwm):
+        if(pwm > 1):
+            pwm = 1
+        if(pwm < -1):
+            pwm = -1
+        self.kit.motor2.throttle = pwm
+
+
     def setMotor(self,speed,debug = False):
+
         self.lasterror = self.error 
         self.error = speed - self.speedRightWheel
         self.sumerror += self.error
@@ -81,12 +96,10 @@ class Motor:
             print('self.output',"{:2f}".format(self.output),'self.speedRightWheel',"{:2f}".format(self.speedRightWheel),'self.error',"{:2f}".format(self.error))
         
         self.kit.motor2.throttle = self.output / 100
-        self.kit.motor1.throttle = self.output / 100
+        # self.kit.motor1.throttle = self.output / 100
 
     def getMotorTurnLeft(self):
         return self.speedLeftWheel
 
     def getMotorTurnRight(self):
         return self.speedRightWheel    
-    
-
