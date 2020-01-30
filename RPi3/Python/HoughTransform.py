@@ -92,16 +92,9 @@ class HoughTransform:
                 # print('stop')
                 break
         
-        # color range
-        lowerY=np.array([200,200,0])
-        upperY=np.array([255,255,204])    
-        maskY = cv2.inRange(self.frame, lowerY, upperY)
-
-        lowerW=np.array([170,190,190])
-        upperW=np.array([255,255,255])    
-        maskW = cv2.inRange(self.frame, lowerW, upperW)
-
-        mask = maskY + maskW
+        gray=cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
+        edges = cv2.Canny(gray,100,200)
+        edges = dilation(edges, square(3))
         
         # crop image
         region_of_interest_vertices = [   
@@ -109,7 +102,7 @@ class HoughTransform:
             (0, (height/3)+10),
             (width, (height/3)+10),
             (width, height)]
-        crop = self.region_of_interest(mask,np.array([region_of_interest_vertices], np.int32))
+        crop = self.region_of_interest(edges,np.array([region_of_interest_vertices], np.int32))
         crop = dilation(crop, square(3))
         lines = cv2.HoughLinesP(crop,rho = 1,theta = 1*np.pi/180,threshold = 40,minLineLength = 10,maxLineGap = 250)
     
@@ -131,13 +124,13 @@ class HoughTransform:
 
             if(len(l)):                
                 x1,x2,y1,y2 = self.avgSlope(l)
-                self.slope_left = self.findSlope((x1,y1),(x2,y2),height)
+                self.slope_left = self.findSlope((x1,y1),(x2,y2),width)
                 #print(x1,x2,y1,y2,'slope_left',slope_left)
                 cv2.line(dframe, (x1, y1), (x2, y2), (255, 0, 0), 3)
 
             if(len(r)):                
                 x1,x2,y1,y2 = self.avgSlope(r)
-                self.slope_right = self.findSlope((x1,y1),(x2,y2),height)
+                self.slope_right = self.findSlope((x1,y1),(x2,y2),width)
                 #print(x1,x2,y1,y2,'slope_right',slope_right)
                 cv2.line(dframe, (x1, y1), (x2, y2), (0, 0, 255), 3)
 
@@ -145,9 +138,8 @@ class HoughTransform:
             if(self.slope > 2):
                 self.slope = 2
             elif(self.slope < -2):
-                self.slope = -2  
-            print('slope',self.slope)   
+                self.slope = -2   
 
         
-        # cv2.imshow('frame', dframe)  
+        cv2.imshow('frame', dframe)  
             
