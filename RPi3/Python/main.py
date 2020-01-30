@@ -35,10 +35,12 @@ if __name__ == "__main__":
     sum_error = 0
     output = 0
 
-    kp = 5
+    kp = 8.5
     ki = 0
-    kd = 2
+    kd = 3.5
 
+    redline = False
+    founding_line = 0
 
     try: 
         
@@ -55,12 +57,26 @@ if __name__ == "__main__":
                         break
 
                     lasterror = error
-                    error = htf.run(image,debugs = True)
+                    error , redline , founding_line = htf.run(image,debugs = True)
                     error = float(error)
                     sum_error += error
 
-                    output = ( error * kp ) + ( sum_error * ki ) + ( ( error - lasterror ) * kd )
-
+                    if(founding_line == 2):
+                        kp = 8.5
+                        ki = 0
+                        kd = 5.5                    
+                    elif(founding_line == 1):
+                        kp = 6.5
+                        ki = 0
+                        kd = 3.5     
+                    else:
+                        pass
+                        # kp = 0
+                        # ki = 0
+                        # kd = 0           
+                    
+                    output = ( error * kp ) + ( sum_error * ki ) + ( ( error - lasterror ) * kd )    
+                    
                     motor.run()
                     motor.setMotorLeft((def_speed + output)/100)
                     motor.setMotorRight((def_speed - output)/100)
